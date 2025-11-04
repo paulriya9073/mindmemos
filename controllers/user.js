@@ -52,6 +52,9 @@ exports.login = async (req, res) => {
             .select("+password")
         .populate("notes");
 
+        console.log(user);
+        
+
         if (!user) {
             return res.status(400).json({
                 success: false,
