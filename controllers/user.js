@@ -30,7 +30,7 @@ exports.register = async (req, res) => {
 
     res.status(201).cookie("token", token, options).json({
       success: true,
-      message: "User registered successfully",
+      message: `Welcome to Mind Memos ${user.username || "User"} `,
       user,
       token,
     });
@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
 
     res.status(200).cookie("token", token, options).json({
       success: true,
-      message: "Logged in successfully",
+      message: `Welcome back, ${user.username || "User"} `,
       user,
       token,
     });
@@ -104,7 +104,13 @@ exports.logout = async (req, res) => {
 
 exports.myProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate("notes");
+    const user = await User.findById(req.user._id) .populate({
+        path: "notes",
+        populate: [
+          { path: "owner", select: "username email _id" }, 
+          { path: "collaborators", select: "username email _id" },
+        ],
+      });
 
     res.status(200).json({
       success: true,
